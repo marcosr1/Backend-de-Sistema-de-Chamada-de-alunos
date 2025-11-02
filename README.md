@@ -61,6 +61,7 @@ Content-Type: application/json
 }
 ```
 - PUT /alunos/1 - Muda qualquer informação do aluno, escolha o que vai mudar e mande no corpo Json.
+```
 Content-Type: application/json
 {
   "nome": "Elior", - opcional
@@ -69,12 +70,13 @@ Content-Type: application/json
   "telefone": "99999-0000", - opcional
   "dataEntrada": "2025-11-01" - opcional
 }
-
+```
 ---
 
 4. **Endpoints Presença**
 
 - GET /presencas/1 - Lista as presenças do aluno
+```
 Exemplo:
   {
     "id": 1,
@@ -86,16 +88,16 @@ Exemplo:
     "data": "2025-11-03",
     "presente": false
   }
-
+```
 - POST /presencas/1?presente=true - Registra a presença do aluno.
 
 - POST /presencas/registrarlote - Registra presenças juntas com um corpo JSON.
+```
 Exemplo:
-
   { "alunoId": 1, "presente": true },
   { "alunoId": 2, "presente": false },
   { "alunoId": 3, "presente": true }
-
+```
 ---
 
 5. **Histórico de Frequência**
@@ -103,6 +105,7 @@ Exemplo:
 - POST /historicos/gerar?ano=2025&mes=11 - Gera o historico do mês indicado.
 
 - GET /historicos?ano=2025&mes=11 - Exibe o historico que foi gerado com o post acima.
+```
 Exemplo:
  {
     "nomeAluno": "Aluno 1",
@@ -120,12 +123,13 @@ Exemplo:
     "faltas": 3,
     "percentual": 75.00
   }
-
+```
 - GET /historicos/pdf?ano=2025&mes=11 - Gera um pdf com o Historico do mês que foi criado com o POST acima.
 
 ---
 
 6. **Estrutura do Projeto**
+```
 src/
 ├─ main/
 │  ├─ java/com/example/apipresenca/
@@ -135,7 +139,7 @@ src/
 │  │  └─ service/          # Lógica de negócio
 │  └─ resources/
 │     └─ application.properties
-
+```
 ---
 
 7. **Observação**
