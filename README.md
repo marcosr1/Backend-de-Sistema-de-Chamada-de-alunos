@@ -1,135 +1,145 @@
-Backend de Sistema de Chamada de Alunos
-Descrição
+# Backend de Sistema de Chamada de Alunos
 
-Este projeto é um backend em Java com Spring Boot para gerenciar presença de alunos, histórico de frequência e geração de relatórios em PDF.
+## Descrição
 
-Funcionalidades principais:
+Este backend em **Java Spring Boot** gerencia a presença de alunos, histórico mensal de frequência e geração de relatórios em PDF.
 
-Registrar presença diária de alunos.
+Funcionalidades principais:  
 
-Listar alunos e suas informações.
+- Registrar presença diária de alunos.  
+- Listar alunos e suas informações (sem incluir presenças por padrão).  
+- Gerar histórico mensal.  
+- Exportar histórico em PDF.
 
-Gerar histórico de frequência mensal.
+Banco de dados: **MySQL**.
 
-Exportar histórico em PDF.
+---
 
-Banco de dados utilizado: MySQL (Railway ou local).
+## Tecnologias
 
-Tecnologias
+- Java 21  
+- Spring Boot 3  
+- Spring Data JPA  
+- MySQL  
+- iText (PDF)  
 
-Java 17
+---
 
-Spring Boot 3
+## Instalação
 
-Spring Data JPA
+1. **Clone o repositório**
 
-MySQL
-
-iText (para geração de PDFs)
-
-Instalação
-
-Clone o repositório
-
+```bash
 git clone https://github.com/marcosr1/Backend-de-Sistema-de-Chamada-de-alunos.git
 cd Backend-de-Sistema-de-Chamada-de-alunos
+```
 
+---
 
-Configurar variáveis de ambiente
-
-Crie um arquivo .env ou configure diretamente no seu sistema:
+2. **Configurar variáveis de ambiente (.env ou no sistema)**
 
 SPRING_DATASOURCE_URL=jdbc:mysql://<host>:<porta>/<database>
 SPRING_DATASOURCE_USERNAME=<usuario>
 SPRING_DATASOURCE_PASSWORD=<senha>
 
+---
 
-Substitua <host>, <porta>, <database>, <usuario> e <senha> pelos dados do seu banco.
+3. **Endpoints Alunos**
 
-Build do projeto
-
-Usando Maven:
-
-mvn clean install
-
-
-Executar o projeto
-
-mvn spring-boot:run
-
-
-O servidor vai subir normalmente em http://localhost:8080.
-
-Endpoints Disponíveis
-Alunos
-
-Listar todos os alunos
-GET /alunos
-Retorna todos os alunos (sem informações de presença detalhadas).
-
-Cadastrar novo aluno
-POST /alunos
-
+- GET /alunos - lista todos os alunos do banco trazendo suas informações.
+  
+- POST /alunos - registra um aluno novo
+Exemplo:
+Content-Type: application/json
 {
   "nome": "nomeAluno",
-  "idade": 21,
-  "categoria": "A",
-  "telefone": "99999-9999",
-  "dataEntrada": "2025-01-10"
+  "idade": 18,
+  "categoria": "Branca 1 grau",
+  "telefone": "99999-0000",
+  "dataEntrada": "2025-11-01"
 }
 
-
-Atualizar aluno parcialmente
-PUT /alunos/{id}
-Pode atualizar qualquer campo do aluno:
-
+- PUT /alunos/1 - Muda qualquer informação do aluno, escolha o que vai mudar e mande no corpo Json.
+Content-Type: application/json
 {
-  "nome": "nomeNovo",
-  "telefone": "98888-8888"
+  "nome": "Elior", - opcional
+  "idade": 18, - opcional
+  "categoria": "Branca 1 grau", - opcional
+  "telefone": "99999-0000", - opcional
+  "dataEntrada": "2025-11-01" - opcional
 }
 
-Presença
+---
 
-Registrar presença
-POST /presencas/{alunoId}?presente=true
-Registra presença (true) ou falta (false) para o dia atual.
+4. **Endpoints Presença**
 
-Listar presença por aluno
-GET /presencas/{alunoId}
-Retorna histórico de presença do aluno.
+- GET /presencas/1 - Lista as presenças do aluno
+Exemplo:
+  {
+    "id": 1,
+    "data": "2025-11-02",
+    "presente": true
+  },
+  {
+    "id": 2,
+    "data": "2025-11-03",
+    "presente": false
+  }
 
-Histórico de Frequência
+- POST /presencas/1?presente=true - Registra a presença do aluno.
 
-Gerar histórico mensal
-POST /historicos/gerar?ano=2025&mes=11
-Gera o histórico de frequência mensal para todos os alunos.
-Substitua ano e mes conforme necessário.
+- POST /presencas/registrarlote - Registra presenças juntas com um corpo JSON.
+Exemplo:
 
-Listar histórico formatado por mês
-GET /historicos?ano=2025&mes=11
-Retorna lista de alunos com total de aulas, presenças, faltas e percentual.
+  { "alunoId": 1, "presente": true },
+  { "alunoId": 2, "presente": false },
+  { "alunoId": 3, "presente": true }
 
-Gerar PDF do histórico
-GET /historicos/pdf?ano=2025&mes=11
-Retorna um arquivo PDF do histórico mensal.
+---
 
-Estrutura do Projeto
+5. **Histórico de Frequência**
+
+- POST /historicos/gerar?ano=2025&mes=11 - Gera o historico do mês indicado.
+
+- GET /historicos?ano=2025&mes=11 - Exibe o historico que foi gerado com o post acima.
+Exemplo:
+ {
+    "nomeAluno": "Aluno 1",
+    "mesReferencia": "2025-11",
+    "totalAulas": 12,
+    "presentes": 10,
+    "faltas": 2,
+    "percentual": 83.33
+  },
+  {
+    "nomeAluno": "Aluno 2",
+    "mesReferencia": "2025-11",
+    "totalAulas": 12,
+    "presentes": 9,
+    "faltas": 3,
+    "percentual": 75.00
+  }
+
+- GET /historicos/pdf?ano=2025&mes=11 - Gera um pdf com o Historico do mês que foi criado com o POST acima.
+
+---
+
+6. **Estrutura do Projeto**
 src/
 ├─ main/
-│  ├─ java/
-│  │  └─ com.example.apipresenca/
-│  │     ├─ controller/       # Endpoints REST
-│  │     ├─ model/            # Classes de modelo (Aluno, Presenca, Historico)
-│  │     ├─ repository/       # Interfaces JPA
-│  │     └─ service/          # Lógica de negócio
+│  ├─ java/com/example/apipresenca/
+│  │  ├─ controller/       # Endpoints REST
+│  │  ├─ model/            # Classes de modelo (Aluno, Presenca, Historico)
+│  │  ├─ repository/       # Interfaces JPA
+│  │  └─ service/          # Lógica de negócio
 │  └─ resources/
-│     ├─ application.properties  # Configurações do Spring Boot
-│     └─ ...
+│     └─ application.properties
 
-Observações
+---
 
-O backend está configurado para CORS liberado (@CrossOrigin("*")), permitindo acesso de qualquer frontend.
+7. **Observação**
 
-A geração de PDF usa iText 5, já inclusa nas dependências.
+- Backend configurado para CORS liberado (@CrossOrigin("*")).
+- Total de aulas calculado como 3 aulas por semana, incluindo fins de semana se necessário.
+- PDF gerado com iText.
 
-Total de aulas é calculado considerando 3 aulas por semana, podendo incluir sábados e domingos.
