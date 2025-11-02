@@ -50,6 +50,7 @@ SPRING_DATASOURCE_PASSWORD=<senha>
   
 - POST /alunos - registra um aluno novo
 Exemplo:
+```
 Content-Type: application/json
 {
   "nome": "nomeAluno",
@@ -58,7 +59,7 @@ Content-Type: application/json
   "telefone": "99999-0000",
   "dataEntrada": "2025-11-01"
 }
-
+```
 - PUT /alunos/1 - Muda qualquer informação do aluno, escolha o que vai mudar e mande no corpo Json.
 Content-Type: application/json
 {
